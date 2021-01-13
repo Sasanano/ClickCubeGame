@@ -1,19 +1,78 @@
+
 const $start = document.querySelector('#start')
 const $game = document.querySelector('#game')
+const $time = document.querySelector('#time')
+const $result = document.querySelector('#result')
+const $timeHeader = document.querySelector('#time-header')
+const $resultHeader = document.querySelector('#result-header')
+const $gameTime = document.querySelector('#game-time')
+const colors = ['red', 'blue', 'green', 'yellow', 'pink', 'purple']
+
+let isGameStarted = false
+
 let score = 0
 
 $start.addEventListener('click', startGame) 
 $game.addEventListener('click', handleBoxClick)
+$gameTime.addEventListener('input', setGameTime)
 
+function show ($el) {
+    $el.classList.remove('hide')
+}
+
+function hide($el) {
+    $el.classList.add('hide')
+}
 
 function startGame() {
+    score =  0
+    setGameTime()
+    $gameTime.setAttribute('disabled', 'true')
+    show($timeHeader)
+    hide($resultHeader)
+    isGameStarted = true
     $game.style.backgroundColor = '#fff'
-    $start.classList.add('hide')
+    hide($start)
 
+    const interval = setInterval(function() {
+        let time = parseFloat($time.textContent)
+
+        if (time <= 0) {
+            clearInterval(interval)
+            endGame()
+        } else {
+            $time.textContent = (time-0.1).toFixed(1)
+        }
+    }, 100)
     renderBox()
 }
 
+function endGame() {
+    isGameStarted = false
+    setGameScore()
+    $gameTime.removeAttribute('disabled')
+    show($start)
+    $game.innerHTML = ''
+    $game.style.backgroundColor = '#ccc'
+    hide($timeHeader)
+    show($resultHeader)
+}
+
+function setGameScore () {
+    $result.textContent = score.toString()
+}
+
+function setGameTime () {
+    let time = +$gameTime.value
+    $time.textContent = time.toFixed(1)
+}
+
 function handleBoxClick(event) {
+    if (!isGameStarted) {
+        return
+    }
+    
+    
     if (event.target.dataset.box) {
         score++
         renderBox()
@@ -27,10 +86,12 @@ function renderBox() {
     const gameSize = $game.getBoundingClientRect()
     const maxTop = gameSize.height - boxSize
     const maxLeft = gameSize.width - boxSize
+    let randomColorsItem = colors[i].value
+
 
     box.style.height = box.style.width = boxSize + 'px'
     box.style.position = 'absolute'
-    box.style.backgroundColor = '#000'
+    box.style.backgroundColor = colors[randomColorsItem]
     box.style.top = getRandom(0, maxTop) + 'px'
     box.style.left = getRandom(0, maxLeft) + 'px'
     box.style.cursor = 'pointer'
