@@ -86,7 +86,7 @@ function renderBox() {
     const gameSize = $game.getBoundingClientRect()
     const maxTop = gameSize.height - boxSize
     const maxLeft = gameSize.width - boxSize
-    let randomColorsItem = colors[i].value
+    let randomColorsItem = getRandom(0, colors.length)
 
 
     box.style.height = box.style.width = boxSize + 'px'
